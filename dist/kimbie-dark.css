@@ -1,0 +1,198 @@
+body {
+  --blue: #66d9ef;
+  --orange: #f06431;
+  --light-orange: #f79a32;
+  --white: #d3af86;
+  --green: hsl(74, 35%, 45%);
+  --dark-green: hsl(101, 60%, 28%);
+  --purple: hsl(288, 38%, 48%);
+  --keyword: #98676a;
+  --light-blue: #8ab1b0;
+  --yellow: hsl(44, 97%, 65%);
+  --red: #f14a68;
+}
+
+.reveal-viewport {
+  background-color: hsl(30, 11%, 20%);
+}
+
+.jsx {
+  color: var(--white);
+
+  .hljs-keyword {
+    color: var(--keyword);
+  }
+  .hljs-title {
+    color: var(--light-blue);
+  }
+  .hljs-ln-code {
+    color: var(--white);
+  }
+  .hljs-string.non-string {
+    color: var(--dark-green);
+  }
+  .hljs-literal {
+    color: var(--orange);
+  }
+  .hljs-string {
+    color: var(--green);
+  }
+
+  .annotation {
+    opacity: 0.5;
+  }
+
+  .hljs-tag {
+    color: var(--white);
+    .hljs-name {
+      color: var(--orange);
+    }
+    .hljs-attr {
+      color: var(--light-orange);
+    }
+    .hljs-string {
+      color: var(--green);
+    }
+    .hljs-string.non-string {
+      color: var(--dark-green);
+    }
+  }
+}
+
+.reveal .fragment.fade-out,
+.reveal .fragment.fade-in {
+  transition: opacity 1s;
+}
+.reveal .fragment.fade-out.visible,
+.reveal .fragment.fade-in:not(.visible) {
+  visibility: visible;
+}
+
+.fragment.strike + .fragment {
+  display: inline-block;
+  line-height: inherit;
+  max-width: 0;
+  height: 1em;
+  overflow: hidden;
+  transition: max-width 1s;
+}
+.fragment.strike.visible {
+  opacity: 0.5;
+}
+.fragment.strike.visible + .fragment {
+  max-width: 2000px;
+  vertical-align: bottom;
+  overflow-x: visible;
+  margin-inline-start: 0.25em;
+  color: var(--dark-green);
+  height: max-content;
+}
+
+/* barlow-condensed-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Barlow Condensed";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./theme/fonts/barlow-condensed-v12-latin-regular.woff2")
+    format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* dotgothic16-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "DotGothic16";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./theme/fonts/dotgothic16-v18-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* sixtyfour-convergence-regular - latin_symbols */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Sixtyfour Convergence";
+  font-style: normal;
+  font-weight: 400;
+  src: url("./theme/fonts/sixtyfour-convergence-v1-latin_symbols-regular.woff2")
+    format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+.reveal ul {
+  list-style-type: none;
+  font-family: "DotGothic16", serif;
+}
+.reveal li.fragment:not(.custom) {
+  opacity: 0.2;
+  visibility: visible;
+}
+.reveal li.fragment.visible:not(.custom) {
+  opacity: 1;
+}
+.reveal li.fragment.current-fragment:not(.custom) {
+  list-style-type: "> ";
+}
+
+.reveal pre > code {
+  padding-block: 1em;
+}
+.reveal pre:not(.inline) > code {
+  padding-inline: 1em;
+  box-shadow: inset 1px 1px 2px hsl(0 0% 0% / 0.3);
+}
+.reveal pre:not(.inline) {
+  border: 8px ridge hsl(40, 42%, 17%);
+  background: hsl(37, 60%, 65%);
+  border-radius: 10px;
+}
+
+.reveal h1,
+.reveal h2 {
+  font-family: "Sixtyfour Convergence", serif;
+  font-variation-settings: "BLED" 0, "SCAN" -1, "XELA" -46, "YELA" 0;
+}
+.reveal h2 {
+  font-size: 48px;
+  filter: hue-rotate(207deg);
+}
+
+#encapsulation code span.hljs-title {
+  color: var(--orange);
+  font-weight: 400;
+}
+
+.reveal section.present h1.glitch {
+  animation: glitch 0.5s 1s linear;
+}
+
+@keyframes glitch {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  77% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.reveal a {
+  font-size: 36px;
+}
+.reveal a.docs {
+  display: block;
+  text-align: end;
+  opacity: 0.7;
+}

@@ -1,40 +1,805 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
-		<title>reveal.js</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Jacquarda+Bastarda+9&family=Kalam:wght@300;400;700&family=Oxanium:wght@200..800&family=Poppins&family=Red+Hat+Display:wght@700&family=Rubik+Glitch&family=Shadows+Into+Light&family=Sixtyfour+Convergence&family=Tilt+Neon&display=swap" rel="stylesheet">    <title>Dependency Injection with React Context</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" />
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="dist/kimbie-dark.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section><h1 class="r-fit-text">Dependency Injection<br> with<br> React Context</h1></section>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
+        <section>
+					<div style="display: grid; gap: 40px; grid-template-columns: 1fr 400px; width: max-content; margin-inline: auto">
+						<h2 style="grid-column: span 2">Encapsulation</h2>
+						<div style="text-align: start">
+							<pre id="encapsulation">
+							<code class="jsx js" style="font-size: 36px; line-height: 1.2">&lt;Alert />
+&lt;Button />
+&lt;Feed /></code>
+							</pre>
+						</div>
+						<img style="margin: 0; justify-self: end" src="dist/thumbs-up.jpeg">
+					</div>
+          <div class="notes">
+            we can take a component like this and use it anywhere we want
+            withouth needing to know anything about its implementation details.
+            makes it easier to read & reason about our code, because all the
+            details that we don't need to worry about right now are hidden away
+          </div>
+        </section>
+
+        <section>
+					<div style="position: relative; margin-inline: auto">
+						<h2 style="grid-column: span 2">Customisation</h2>
+						<ul>
+							<li class="fragment">Change the colour or text</li>
+							<li class="fragment">Change the onClick behaviour</li>
+							<li class="fragment">Change data fetching or state management</li>
+							<li class="fragment">Change behaviour of child component</li>
+							<li class="fragment">Change logging/analytics</li>
+							<li class="fragment">Replace services for testing</li>
+						</ul>		
+						<img class="fragment" style="position: absolute; right: 0; top: 0;" src="dist/MacauleyCulkin.png">
+					</div>
+          <div class="notes">
+            we can take a component like this and use it anywhere we want
+            withouth needing to know anything about its implementation details.
+            makes it easier to read & reason about our code, because all the
+            details that we don't need to worry about right now are hidden away
+          </div>
+        </section>
+
+        <section>
+					<pre><code class="html jsx">&lt;Alert status="error">Something went wrong&lt;/Alert></code></pre>
+					<pre><code class="html jsx">&lt;Button type="primary" onClick={...}>Save&lt;/Button></code></pre>
+					<pre><code class="html jsx">&lt;Feed 
+	theme="dark" 
+	posts={fetchPublicPosts()} 
+	onLike={showLoginModal}
+	onComment={showLoginModal} 
+	analyticsService={analyticsService} 
+/></code></pre>
+        </section>
+
+        <section>
+					<style>
+						.reveal blockquote {
+							border: 8px ridge hsl(40, 42%, 25%);
+							background: hsl(37, 60%, 75%);
+							border-radius: 10px;
+							box-shadow: inset 0 0 6px grey;
+							font-family: "DotGothic16", sans-serif;
+							color: hsl(40, 42%, 20%);
+							text-shadow: 1px 1px 2px hsl(40, 42%, 5%);
+							width: 80%;
+						}
+
+						.reveal blockquote + p {
+							font-size: .8em;
+							width: max-content;
+							margin-inline-start: auto;
+							text-align: start;
+						}
+					</style>
+          <blockquote
+            cite="https://www.jamesshore.com/v2/blog/2006/dependency-injection-demystified"
+          >
+            <p style="text-align: start; width: 90%; height: 170px">
+              Dependency injection means<br> giving
+              <span class="fragment strike" data-fragment-index="1"
+                >an object</span
+              ><span class="fragment" data-fragment-index="1"> a&nbsp;component</span><br>
+              its
+              <span class="fragment strike" data-fragment-index="1"
+                >instance</span
+              ><span class="fragment" data-fragment-index="1"> local</span>
+              variables.
+            </p>
+          </blockquote>
+					<p>- James Shore, <br><a href="https://www.jamesshore.com/v2/blog/2006/dependency-injection-demystified"
+						>Dependency Injection Demystified</a></p>
+          <div class="notes">
+            and that's basically all dependency injection is
+          </div>
+          <div class="notes">
+            doesn't quite work with react, because it's referring to instance
+            variables of objects, and react works with functions, change to
+            "giving a component its variables" emphasise a variable could be a
+            value or it could be a function
+          </div>
+          <blockquote
+						class="fragment"
+						style="text-align: start"
+            cite="https://www.jamesshore.com/v2/blog/2006/dependency-injection-demystified"
+          >
+            <p style="margin-inline: 1em">a 25-dollar term for a <br>5-cent concept</p>
+          </blockquote>
+        </section>
+
+        <section>
+					<style>
+						.code-container {
+							position: relative;
+						}
+						.is-dependency {
+							position: absolute;
+							top: 50%;
+							right: 5px;
+							transform: translateY(-50%);
+						}
+					</style>
+          <div class="notes">
+            So why do we need a fancy name like dependency injection if its just
+            props?
+          </div>
+          <ul>
+						<h2>Not all props are dependencies</h2>
+						<pre class="fragment code-container"><code class="html jsx">&lt;Alert status="error">Something went wrong&lt;/Alert></code><span class="fragment is-dependency">❌</span></pre>
+						<pre class="fragment code-container"><code class="html jsx">&lt;Button type="primary" onClick={...}>Save&lt;/Button></code><span class="fragment is-dependency">❌/✔️</span></pre>
+						<pre class="fragment code-container"><code class="html jsx">&lt;Feed 
+	theme="dark" 
+	posts={fetchPublicPosts()} 
+	onLike={showLoginModal}
+	onComment={showLoginModal} 
+	analyticsService={analyticsService} 
+/></code><span class="fragment is-dependency">✔️</span></pre>
+	        </section>
+
+
+        <section>
+            <h2>Not all dependency injection is props</h2>
+						<pre><code class="jsx" data-line-numbers="|8-14|2,3">function Feed() { 
+	const { theme, posts, onLike,
+		onComment, analyticsService } = Feed.dependencies; 
+
+	// ... 
+}
+
+Feed.dependencies = { 
+	theme: getTheme(), 
+	posts: fetchPublicPosts(), 
+	onLike: showLoginModal, 
+	onComment: showLoginModal, 
+	analyticsService 
+}</code></pre>
+            <div class="notes">
+							why would you want to do something like this?
+            </div>
+          </ul>
+        </section>
+
+				<section>
+					<pre><code class="jsx" data-line-numbers="|1,2|6|5,8-10">function Feed({ theme, posts, onLike, 
+										onComment, analyticsService }) {
+	
+	return (
+		&lt;FeedContainer theme={theme}>
+			{posts.map(post => (
+				&lt;Post 
+					post={post} theme={theme} 
+					onLike={onLike} onComment={onComment} 
+					analyticsService={analyticsService} 
+				/>))}
+		&lt;/FeedContainer>
+	)
+}</code></pre>
+				</section>
+
+				<section>
+					<pre><code class="jsx" data-line-numbers="|1,2|5-13">function Post({ theme, onLike, onComment, 
+					analyticsService, post }) {
+
+	return (
+		&lt;PostContainer theme={theme}>
+			&lt;Content theme={theme} post={post} />
+			&lt;LikeButton 
+				theme={theme} onLike={onLike} 
+				analyticsService={analyticsService} />
+			&lt;CommentButton 
+				theme={theme} onLike={onLike} 
+				analyticsService={analyticsService} />
+		&lt;/PostContainer>
+	)
+}
+					</code></pre>
+				</section>
+
+				<section>
+					<div class="notes">
+						so we could use a solution like this, to avoid this prop drilling, but it still requires setting the 
+						dependencies on each component individually, even if you can skip the "middleman" components
+					</div>
+					<pre><code class="jsx" data-line-numbers="|4,10">function Feed() { 
+	// ... 
+}
+Feed.dependencies = { theme: getTheme() }
+
+function LikeButton() { 
+	// ... 
+}
+LikeButton.dependencies = { 
+	theme: getTheme(), 
+	analyticsService, 
+	onLike: showLoginModal 
+}</code></pre>
+					<div class="notes">
+						and react gives us a more reacty way to do this
+					</div>
+				</ul>
+			</section>
+
+        <section>
+          <h1 class="glitch">Hooks</h1>
+        </section>
+
+        <section>
+					<style>
+						pre.ideal-container .jsx .hljs-tag .hljs-attr:nth-child(5) {
+							color: var(--blue);
+						}
+					</style>
+          <div class="notes">
+            so, in our ideal scenario, we could create a container that managed our dependencies, like so
+          </div>
+					<pre class="ideal-container"><code class="jsx" data-line-numbers="|5,11,13|6-10|12">export function App() {
+	// ...
+	
+	return (
+		&lt;DependenciesContainer
+			dependencies={{ 
+				theme: getTheme(), getPosts: fetchPublicPosts,
+				onLike: showLoginModal, onComment: showLoginModal,
+				analyticsService
+			}}
+		>
+			&lt;Feed />
+		&lt;/DependenciesContainer>
+	)
+}</code></pre>
+        </section>
+
+				<section>
+					<div class="notes">and then we could use the dependencies in any of the child components something like</div>
+          <pre><code class="jsx" data-line-numbers="3-6">function Feed() {
+	
+	const { 
+		theme, 
+		posts 
+	} = useDependencies();
+	
+	// ...
+}			
+</code></pre>
+<pre><code class="jsx" data-line-numbers="3-7">function LikeButton() {
+
+	const { 
+		theme, 
+		onLike, 
+		analyticsService 
+	} = useDependencies();
+	
+	// ...
+}						
+</code></pre>
+						<div class="notes">so how do we make this work?</div>
+				</section>
+
+				<section>
+					<div class="notes">First, we need a function that creates the container component and exposes its value</div>
+					<pre><code class="jsx" data-line-numbers="|2|4-10|5|6-9|7|8">function createDependencies() {
+	const dependencies = { value: undefined }
+
+	return {
+		dependencies,
+		Container: ({ children, deps }) => {
+			dependencies.value = deps
+			return children
+		},
+	}
+}</code></pre>
+<pre class="fragment"><code class="jsx" data-line-numbers="|1|2">function useDependencies(container): T {
+	return container.dependencies.value
+}		
+</code></pre>	
+				</section>
+
+				<section>
+					<style>
+						.example-create .jsx .hljs-tag .hljs-attr:nth-child(5) {
+							color: var(--blue);
+						}
+					</style>
+					<div class="notes">then we can use our function to create our container</div>
+					<pre class="example-create"><code class="jsx" data-line-numbers="">const feedDependencies = createDependencies()</code></pre>
+					<pre class="fragment example-create"><code class="jsx" data-line-numbers="3-11,13|6-8">export function PublicFeed() {	
+						return (
+							&lt;feedDependencies.Container
+								value={{ 
+									theme: getTheme(), 		
+									getPosts: fetchPublicPosts,
+									onLike: showLoginModal,
+									onComment: showLoginModal,
+									analyticsService
+								}}
+							>
+								&lt;Feed />
+							&lt;/myDependencies.Container>
+						)
+					}					
+										</code></pre>
+						</section>
+						<section>
+							<pre class="example-create"><code class="jsx" data-line-numbers="|6-8">export function ChronologicalFeed() {	
+	return (
+		&lt;feedDependencies.Container
+			value={{ 
+				theme: getTheme(), 		
+				getPosts: fetchUserPosts,
+				onLike: postLike,
+				onComment: postComment,
+				analyticsService
+			}}
+		>
+			&lt;Feed />
+		&lt;/myDependencies.Container>
+	)
+}					
+												</code></pre>
+								</section>
+		
+        <section>
+					<div class="notes">and use the hook in our child components</div>
+<pre><code class="jsx" data-line-numbers="2-6">export function LikeButton() {
+	const { 
+		theme, 
+		onLike, 
+		analyticsService
+	} = useDependencies(feedDependencies)
+
+	// ...
+}</code></pre>
+        </section>
+
+
+
+				<section>
+					<style>
+						.fade-container {
+							position: absolute;
+							z-index: 1;
+							top: 0;
+							width: max-content;
+							height: max-content;
+						}
+						.fade-container pre {
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: max-content;
+							background: transparent;
+							box-shadow: none;
+						}
+						.fade-container pre code {
+							background: transparent;
+							color: var(--white);
+						}
+					</style>
+					<div class="notes">squint a little and maybe change some of the variable names, some of this might look a little familiar</div>
+					<div class="fade-container" style="left: 412px; top: 8px;">
+						<pre class="fragment fade-out jsx inline" data-fragment-index="1"><code>createDependencies();</code></pre>
+						<pre class="fragment fade-in jsx inline" data-fragment-index="1"><code>createContext();</code></pre>		
+					</div>
+					<pre><code class="jsx">const feedDependencies = </code></pre>
+</section>
+
+					<section>
+						<div class="fade-container" style="top: 55px; left: 209px">
+							<pre class="fragment fade-out jsx inline" data-fragment-index="1"><code style="color: var(--orange)">feedDependencies.Container</code></pre>
+							<pre class="fragment fade-in jsx inline" data-fragment-index="1"><code style="color: var(--orange)">feedDependencies.Provider</code></pre>		
+						</div>	
+						<div class="fade-container" style="top: 332px; left: 222px">
+							<pre class="fragment fade-out jsx inline" data-fragment-index="1" style="display: flex; align-items: baseline;"><code style="color: var(--orange)" data-noescape>feedDependencies.Container</code><span style="color: var(--white); margin-inline-start: -3px">&gt;</span></pre>
+							<pre class="fragment fade-in jsx inline" data-fragment-index="1" style="display: flex; align-items: baseline;"><code style="color: var(--orange)">feedDependencies.Provider</code><span style="color: var(--white); margin-inline-start: -3px">&gt;</span></pre>
+						</div>	
+<pre class="example-create"><code class="jsx" data-line-numbers="3,13">export function PublicFeed() {	
+		return (
+			&lt;
+				value={{ 
+					theme: getTheme(), 		
+					getPosts: fetchPublicPosts,
+					onLike: showLoginModal,
+					onComment: showLoginModal,
+					analyticsService
+				}}
+			>
+				&lt;Feed />
+			&lt;/
+		)
+	}					
+	</code></pre>
+					</section>
+
+					<section>
+						<div class="fade-container" style="top: 147px; left: 175px">
+							<pre class="fragment fade-out jsx inline" data-fragment-index="1"><code>useDependencies(feedDependencies)</code></pre>
+							<pre class="fragment fade-in jsx inline" data-fragment-index="1"><code>useContext(feedDependencies)</code></pre>		
+						</div>	
+
+						<pre><code class="jsx" data-line-numbers="6">export function LikeButton() {
+	const { 
+		theme, 
+		onLike, 
+		analyticsService
+	} = 
+
+	// ...
+}</code></pre>							
+					</section>
+
+				<section>
+					<img style="filter:blur(2px)" src="dist/Surprised-Pikachu.png" alt="surprised pikachu meme">
+				</section>
+
+
+				<section>
+					<h2>React Context<br> is<br> Dependency Injection</h2>
+					<div class="notes">so that's nice, it's built in, don't need to learn anything, but it's not very discoverable</div>
+				</section>
+
+				<section>
+					<h2>React Context</h2>
+					<ul>
+						<li class="fragment">Built in 👍</li>
+						<li class="fragment">Discoverability 👎</li>
+					</ul>
+				</section>
+
+				<section>
+					<pre><code class="jsx">it('foo', () => {
+	render(&lt;Feed />)
+
+	//...
+})</code></pre>
+				</section>
+
+        <section>
+					<h2>libraries</h2>
+					<ul>
+						<li class="fragment">Build-time shenanigans</li>
+						<li class="fragment">Secretly context</li>
+						<li class="fragment">Nothing to do with React at all</li>
+					</ul>
+					<div class="notes">
+						disclaimer, i've not used any of these libraries, just looked at the docs
+					</div>
+				</section>
+
+				<section>
+					<h2>Obsidian</h2>
+					<pre><code class="jsx">@Singleton() @Graph()
+class ApplicationGraph extends ObjectGraph {
+	@Provides()
+	httpClient(): HttpClient {
+		return new HttpClient();
+	}
+
+	@Provides()
+	biLogger(httpClient: HttpClient): BiLogger {
+		return new BiLogger(httpClient);
+	}
+}</code></pre>
+<a class="docs" href="https://github.com/wix-incubator/obsidian">[docs]</a>
+				</section>
+
+				<section>
+					<h2>Obsidian</h2>
+					<pre><code class="jsx" data-line-numbers="|1|9-12">const useButtonClick = ({ biLogger }: Injected): UseButtonPress => {
+  const onClick = useCallback(() => {
+    biLogger.logButtonClick();
+  }, [biLogger]);	
+  
+  return { onClick };
+};
+
+export const useButton = injectHook(
+													useButtonClick, 
+													ApplicationGraph
+												);</code></pre>
+					<div class="notes">dependencies resolved at compile time</div>
+				</section>
+
+				<section>
+					<blockquote cite="https://wix-incubator.github.io/obsidian/docs/documentation/installation">
+						<p>This approach helps reduce the amount of boilerplate code required by developers</p>
+					</blockquote>
+					<p>- <a style="text-decoration: underline" href="https://wix-incubator.github.io/obsidian/docs/documentation/installation/">The Obsidian Docs</a></p>
+					</section>
+					<section>
+					<ul>
+						<li class="fragment">explicit dependency graph</li>
+						<li class="fragment">requires Babel</li>
+						<li class="fragment">can be integrated with vite <br>or create-react-app</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>wox-inject</h2>
+					<pre><code class="jsx" data-line-numbers="|1-6|9">@Injectable()
+class GreeterService {
+  greet(val: string) {
+    console.log(val);
+  }
+}
+ 
+function App() {
+  const greeterService = useResolve(GreeterService);
+ 
+  return (
+    &lt;button 
+			type="button" 
+			onClick={() => greeterService.greet('hello!')}
+		>
+			click me
+		&lt;/button>
+  );
+}
+					</code></pre>
+					<a class="docs" href="https://wox.so/">[docs]</a>
+					<div class="notes">similar to obsidian with the annotations, only works with vite, no SSR</div>
+				</section>
+
+				<section>
+					<ul>
+						<li class="fragment">simpler, still explicit</li>
+						<li class="fragment">no SSR</li>
+						<li class="fragment">Vite only</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>react-dependency-injection</h2>
+					<pre><code class="jsx" data-line-numbers="|2|5">export default function render() {
+	const dependencies = createDependencies()
+
+	ReactDOM.render(
+			&lt;App { ...dependencies} />,
+			document.getElementById('root')
+	)
+}
+					</code></pre>
+					<a href="https://github.com/troch/react-dependency-injection/blob/master/README.md" class="docs">[docs]</a>
+				</section>
+
+				<section>
+					<h2>react-dependency-injection</h2>
+					<pre><code class="jsx" data-line-numbers="11-14">function App(props) {
+    return (
+        &lt;div>
+					&lt;Header />
+					&lt;View />
+					&lt;Footer />
+        &lt;/div>
+    )
+}
+
+export default setDependencies((props) => ({
+    formatters: props.formatters,
+    messages: props.messages
+}))(App)
+				</code></pre>
+			</section>
+
+			<section>
+				<h2>react-dependency-injection</h2>
+				<pre><code class="jsx" data-line-numbers="|1,10|12">function ArticleDateTime({ formatters, messages, date, format }) {
+    return (
+        <div>
+            { messages.get('article.dateCreated') }
+            <time>
+                { formatters.formatDateTime(date, format) }
+            </time>
+        </div>
+    );
+}
+
+export default inject('formatters', 'messages')(DateTime);
+				</code></pre>
+			</section>
+
+			<section>
+				<pre class="fragment" style="position: relative"><code class="jsx">const feedDependencies = createContext({
+	theme: getTheme(), 
+	getPosts: fetchPublicPosts,
+	onLike: showLoginModal,
+	onComment: showLoginModal,
+	analyticsService
+});</code><div class="fragment" style="position: absolute; left: 30%; top: 40%; transform: translate(0%,50%); font-size: 10em">❌</div></pre>
+				<pre class="fragment"><code class="jsx">const feedDependencies = createContext(undefined)</code></pre>
+				</section>
+
+				<section>
+					<pre><code class="jsx js" data-line-numbers="3-6">function LikeButton() {
+
+const dependencies = useContext(feedDependencies);
+if (!dependencies) {
+	throw new Error('LikeButton must be wrapped in DependenciesContext')
+}
+const { 
+	theme, 
+	onLike, 
+	analyticsService 
+} = dependencies;
+
+// ...
+}</code></pre>
+					
+				</section>
+
+			<section>
+				<h2>What about dependencies that aren't exposed?</h2>
+			</section>
+
+			<section>
+				<pre class=""><code class="jsx" data-line-numbers="|7">function LoginForm() {
+const [username, setUsername] = useState("")
+const [password, setPassword] = useState("")
+
+const onSubmit = () => {
+	if (username && password) {
+		login(username, password)
+	}
+}
+
+return (
+	&lt;form onSubmit={onSubmit}>
+		&lt;input value={username} onChange={setUsername} />
+		&lt;input type="password" value={password} onChange={setPassword} />
+	&lt;/form>
+)
+}
+				</code></pre>
+			</section>
+
+			<section>
+				<pre><code class="jsx">it("calls the login service", () => {
+	render(&lt;LoginForm />)
+
+	// fill in form
+
+	expect(login).toHaveBeenCalledWith(username, password)
+})</code></pre>
+			</section>
+ 
+        <section>
+          <h2>react-magnetic-di</h2>
+          <div class="notes">
+            one library i do find super useful though, specifically for
+            injecting dependencies in tests no specific set-up, code doesn't
+            even know that its dependencies are being injected can replace
+            basically anything that's imported examples
+          </div>
+        </section>
+
+				<section>
+					<pre><code class="jsx" data-line-numbers="|7|1-3|7|8-11|9,10|1-3|10|15">import { 
+	injectable, DiProvider 
+} from "react-magnetic-di";
+import { login } from './services'
+
+it("calls the login service", () => {
+	const loginDi = injectable(login, jest.fn())
+	render(&lt;LoginForm />, {
+		wrapper: (props) => 
+			&lt;DiProvider use={[loginDi]} {...props} />,
+	})
+
+	// fill in form
+
+	expect(loginDi).toHaveBeenCalledWith(username, password)
+})</code></pre>
+				</section>
+
+				<section>
+					<pre class=""><code class="jsx" data-line-numbers="|5">function LoginForm() {
+//...	
+	const onSubmit = () => {
+		if (username && password) {
+			login(username, password)
+		}
+	}
+//...	
+}</code></pre>
+					<pre class=""><code class="jsx" data-line-numbers="|5,6">function LoginForm() {
+//...	
+	const onSubmit = () => {
+		if (username && password) {
+			const loginDi = _di(login, null)
+			loginDi(username, password)
+		}
+	}
+//...	
+}</code></pre>
+										</section>
+	
+				<section>
+					<ul>
+						<li class="fragment">Build time (Babel)</li>
+						<li class="fragment">Can replace any export</li>
+						<li class="fragment">Best with classes & functions</li>
+						<li class="fragment">No library-specific code</li>
+					</ul>
+					<div class="notes">
+						can be done without babel, but is a bit trickier
+						if you want to inject a value, turn it into a getter function
+					</div>
+				</section>
+
+				<section>
+					<h2>Summary</h2>
+					<ul>
+						<li class="fragment">DI == passing in variables</li>
+						<li class="fragment">React context == DI</li>
+						<li class="fragment"><code>createContext(null)</code></li>
+						<li class="fragment">react-magnetic-di</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Thank you</h2>
+					<a href="https://di.ez.codes">di.ez.codes</a>
+				</section>
+
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+				controls: false,
+				progress: false,
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      })
+    </script>
+
 		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+			const attributes = document.querySelectorAll('.jsx .hljs-string');
+			attributes.forEach(el => {
+				if (el.textContent.trim().startsWith('{')) {
+					el.classList.add('non-string')
+				}
+			})
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
+			const titles = document.querySelectorAll('.jsx .hljs-title');
+			titles.forEach(el => {
+				if (el.previousSibling?.textContent.endsWith('@')) {
+					el.classList.add('annotation')
+				}
+			})
 		</script>
-	</body>
+  </body>
 </html>
