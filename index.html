@@ -139,6 +139,7 @@
 						}
 						.is-dependency {
 							position: absolute;
+							font-size: 4em;
 							top: 50%;
 							right: 5px;
 							transform: translateY(-50%);
@@ -150,15 +151,15 @@
           </div>
           <ul>
 						<h2>Not all props are dependencies</h2>
-						<pre class="fragment code-container"><code class="html jsx">&lt;Alert status="error">Something went wrong&lt;/Alert></code><span class="fragment is-dependency">❌</span></pre>
-						<pre class="fragment code-container"><code class="html jsx">&lt;Button type="primary" onClick={...}>Save&lt;/Button></code><span class="fragment is-dependency">❌/✔️</span></pre>
+						<pre class="fragment code-container"><code class="html jsx">&lt;Alert status="error">Something went wrong&lt;/Alert></code><span class="fragment is-dependency">🙅</span></pre>
+						<pre class="fragment code-container"><code class="html jsx">&lt;Button type="primary" onClick={...}>Save&lt;/Button></code><span class="fragment is-dependency">🤷</span></pre>
 						<pre class="fragment code-container"><code class="html jsx">&lt;Feed 
 	theme="dark" 
 	posts={fetchPublicPosts()} 
 	onLike={showLoginModal}
 	onComment={showLoginModal} 
 	analyticsService={analyticsService} 
-/></code><span class="fragment is-dependency">✔️</span></pre>
+/></code><span class="fragment is-dependency">🎉</span></pre>
 	        </section>
 
 
@@ -225,10 +226,10 @@ Feed.dependencies = {
 						so we could use a solution like this, to avoid this prop drilling, but it still requires setting the 
 						dependencies on each component individually, even if you can skip the "middleman" components
 					</div>
-					<pre><code class="jsx" data-line-numbers="|4,10">function Feed() { 
+					<pre><code class="jsx" data-line-numbers="|4,10">function Post() { 
 	// ... 
 }
-Feed.dependencies = { theme: getTheme() }
+Post.dependencies = { theme: getTheme() }
 
 function LikeButton() { 
 	// ... 
@@ -263,7 +264,7 @@ LikeButton.dependencies = {
 	return (
 		&lt;DependenciesContainer
 			dependencies={{ 
-				theme: getTheme(), getPosts: fetchPublicPosts,
+				theme: getTheme(), posts: fetchPublicPost(),
 				onLike: showLoginModal, onComment: showLoginModal,
 				analyticsService
 			}}
@@ -313,7 +314,7 @@ LikeButton.dependencies = {
 		},
 	}
 }</code></pre>
-<pre class="fragment"><code class="jsx" data-line-numbers="|1|2">function useDependencies(container): T {
+<pre class="fragment"><code class="jsx" data-line-numbers="|1|2">function useDependencies(container) {
 	return container.dependencies.value
 }		
 </code></pre>	
@@ -327,22 +328,22 @@ LikeButton.dependencies = {
 					</style>
 					<div class="notes">then we can use our function to create our container</div>
 					<pre class="example-create"><code class="jsx" data-line-numbers="">const feedDependencies = createDependencies()</code></pre>
-					<pre class="fragment example-create"><code class="jsx" data-line-numbers="3-11,13|6-8">export function PublicFeed() {	
-						return (
-							&lt;feedDependencies.Container
-								value={{ 
-									theme: getTheme(), 		
-									getPosts: fetchPublicPosts,
-									onLike: showLoginModal,
-									onComment: showLoginModal,
-									analyticsService
-								}}
-							>
-								&lt;Feed />
-							&lt;/myDependencies.Container>
-						)
-					}					
-										</code></pre>
+					<pre class="fragment example-create"><code class="jsx" data-line-numbers="|3-11,13|6-8">export function PublicFeed() {	
+	return (
+		&lt;feedDependencies.Container
+			value={{ 
+				theme: getTheme(), 		
+				posts: fetchPublicPosts(),
+				onLike: showLoginModal,
+				onComment: showLoginModal,
+				analyticsService
+			}}
+		>
+			&lt;Feed />
+		&lt;/myDependencies.Container>
+	)
+}					
+					</code></pre>
 						</section>
 						<section>
 							<pre class="example-create"><code class="jsx" data-line-numbers="|6-8">export function ChronologicalFeed() {	
@@ -350,7 +351,7 @@ LikeButton.dependencies = {
 		&lt;feedDependencies.Container
 			value={{ 
 				theme: getTheme(), 		
-				getPosts: fetchUserPosts,
+				posts: fetchUserPosts(),
 				onLike: postLike,
 				onComment: postComment,
 				analyticsService
@@ -422,7 +423,7 @@ LikeButton.dependencies = {
 			&lt;
 				value={{ 
 					theme: getTheme(), 		
-					getPosts: fetchPublicPosts,
+					posts: fetchPublicPosts(),
 					onLike: showLoginModal,
 					onComment: showLoginModal,
 					analyticsService
@@ -534,7 +535,7 @@ export const useButton = injectHook(
 					<ul>
 						<li class="fragment">explicit dependency graph</li>
 						<li class="fragment">requires Babel</li>
-						<li class="fragment">can be integrated with vite <br>or create-react-app</li>
+						<li class="fragment">can be integrated with Vite <br>or create-react-app</li>
 					</ul>
 				</section>
 
@@ -608,7 +609,7 @@ export default setDependencies((props) => ({
 
 			<section>
 				<h2>react-dependency-injection</h2>
-				<pre><code class="jsx" data-line-numbers="|1,10|12">function ArticleDateTime({ formatters, messages, date, format }) {
+				<pre><code class="jsx" data-line-numbers="|1,10|12">function DateTime({ formatters, messages, date, format }) {
     return (
         <div>
             { messages.get('article.dateCreated') }
@@ -637,17 +638,19 @@ export default inject('formatters', 'messages')(DateTime);
 				<section>
 					<pre><code class="jsx js" data-line-numbers="3-6">function LikeButton() {
 
-const dependencies = useContext(feedDependencies);
-if (!dependencies) {
-	throw new Error('LikeButton must be wrapped in DependenciesContext')
-}
-const { 
-	theme, 
-	onLike, 
-	analyticsService 
-} = dependencies;
+	const dependencies = useContext(feedDependencies);
+	if (!dependencies) {
+		throw new Error(
+			'LikeButton requires DependenciesContext'
+		)
+	}
+	const { 
+		theme, 
+		onLike, 
+		analyticsService 
+	} = dependencies;
 
-// ...
+	// ...
 }</code></pre>
 					
 				</section>
@@ -658,21 +661,21 @@ const {
 
 			<section>
 				<pre class=""><code class="jsx" data-line-numbers="|7">function LoginForm() {
-const [username, setUsername] = useState("")
-const [password, setPassword] = useState("")
+	const [username, setUsername] = useState("")
+	const [password, setPassword] = useState("")
 
-const onSubmit = () => {
-	if (username && password) {
-		login(username, password)
+	const onSubmit = () => {
+		if (username && password) {
+			login(username, password)
+		}
 	}
-}
 
-return (
-	&lt;form onSubmit={onSubmit}>
-		&lt;input value={username} onChange={setUsername} />
-		&lt;input type="password" value={password} onChange={setPassword} />
-	&lt;/form>
-)
+	return (
+		&lt;form onSubmit={onSubmit}>
+			&lt;input value={username} onChange={setUsername} />
+			&lt;input type="password" value={password} onChange={setPassword} />
+		&lt;/form>
+	)
 }
 				</code></pre>
 			</section>
@@ -688,7 +691,7 @@ return (
 			</section>
  
         <section>
-          <h2>react-magnetic-di</h2>
+          <h1 style="font-size:48px">react-magnetic-di</h1>
           <div class="notes">
             one library i do find super useful though, specifically for
             injecting dependencies in tests no specific set-up, code doesn't
@@ -698,7 +701,7 @@ return (
         </section>
 
 				<section>
-					<pre><code class="jsx" data-line-numbers="|7|1-3|7|8-11|9,10|1-3|10|15">import { 
+					<pre><code class="jsx" data-line-numbers="|7|7|8-11|9,10|10|15">import { 
 	injectable, DiProvider 
 } from "react-magnetic-di";
 import { login } from './services'
@@ -726,7 +729,7 @@ it("calls the login service", () => {
 	}
 //...	
 }</code></pre>
-					<pre class=""><code class="jsx" data-line-numbers="|5,6">function LoginForm() {
+					<pre class="fragment"><code class="jsx" data-line-numbers="5,6">function LoginForm() {
 //...	
 	const onSubmit = () => {
 		if (username && password) {
@@ -737,6 +740,12 @@ it("calls the login service", () => {
 //...	
 }</code></pre>
 										</section>
+
+				<section>
+					<pre><code class="jsx">const loginDi = injectable(login, jest.fn())</code></pre>
+					<pre class="fragment"><code class="jsx">const loginDi = _di(login, null)
+loginDi(username, password)</code></pre>
+				</section>
 	
 				<section>
 					<ul>
@@ -756,14 +765,17 @@ it("calls the login service", () => {
 					<ul>
 						<li class="fragment">DI == passing in variables</li>
 						<li class="fragment">React context == DI</li>
-						<li class="fragment"><code>createContext(null)</code></li>
+						<li class="fragment"><code>createContext(undefined)</code></li>
 						<li class="fragment">react-magnetic-di</li>
 					</ul>
 				</section>
 
 				<section>
-					<h2>Thank you</h2>
-					<a href="https://di.ez.codes">di.ez.codes</a>
+					<div style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px">
+						<h1>Thank you</h1>
+						<img style="grid-row: span 2" src="dist/qr-code.svg">	
+						<a style="font-size: 2.5em" href="https://di.ez.codes">di.ez.codes</a>
+					</div>
 				</section>
 
       </div>
