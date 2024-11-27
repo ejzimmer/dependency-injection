@@ -1,14 +1,14 @@
 body {
-  --blue: #66d9ef;
+  --blue: hsl(200, 87%, 49%);
   --orange: #f06431;
-  --light-orange: #f79a32;
-  --white: #d3af86;
-  --green: hsl(74, 35%, 45%);
+  --orange: hsl(345, 90%, 65%);
+  --white: white;
+  --green: hsl(90, 70%, 55%);
   --dark-green: hsl(101, 60%, 28%);
-  --purple: hsl(288, 38%, 48%);
+  --purple: hsl(288, 65%, 60%);
   --keyword: #98676a;
-  --light-blue: #8ab1b0;
-  --yellow: hsl(44, 97%, 65%);
+  --light-blue: hsl(200, 87%, 70%);
+  --yellow: hsl(54, 90%, 65%);
   --red: #f14a68;
 }
 
@@ -20,26 +20,27 @@ body {
   color: var(--white);
 
   .hljs-keyword {
-    color: var(--keyword);
+    color: var(--light-blue);
+    font-style: italic;
   }
   .hljs-title {
-    color: var(--light-blue);
+    color: var(--green);
   }
   .hljs-ln-code {
     color: var(--white);
   }
-  .hljs-string.non-string {
-    color: var(--dark-green);
+  .hljs-string {
+    color: var(--red);
   }
+  .hljs-string.non-string,
   .hljs-literal {
-    color: var(--orange);
+    color: var(--purple);
   }
   .hljs-string {
-    color: var(--green);
+    color: var(--yellow);
   }
-
-  .annotation {
-    opacity: 0.5;
+  .hljs-attr {
+    color: var(--green);
   }
 
   .hljs-tag {
@@ -48,14 +49,28 @@ body {
       color: var(--orange);
     }
     .hljs-attr {
-      color: var(--light-orange);
-    }
-    .hljs-string {
       color: var(--green);
+      &.property-name {
+        color: var(--white);
+      }
+    }
+    .hljs-string,
+    .hljs-literal {
+      color: var(--yellow);
     }
     .hljs-string.non-string {
-      color: var(--dark-green);
+      color: var(--purple);
     }
+    .hljs-string.non-string span {
+      color: var(--white);
+    }
+    &.curly-bois {
+      color: var(--purple);
+    }
+  }
+
+  .inherited__ {
+    font-style: italic;
   }
 }
 
@@ -84,7 +99,7 @@ body {
   vertical-align: bottom;
   overflow-x: visible;
   margin-inline-start: 0.25em;
-  color: var(--dark-green);
+  color: var(--green);
   height: max-content;
 }
 
@@ -140,8 +155,7 @@ body {
   box-shadow: inset 1px 1px 2px hsl(0 0% 0% / 0.3);
 }
 .reveal pre:not(.inline) {
-  border: 8px ridge hsl(40, 42%, 17%);
-  background: hsl(37, 60%, 65%);
+  border: 6px ridge hsl(0 0% 80% / 0.7);
   border-radius: 10px;
 }
 
@@ -153,6 +167,10 @@ body {
 .reveal h2 {
   font-size: 48px;
   filter: hue-rotate(207deg);
+}
+
+.fragment-never {
+  opacity: 0.2;
 }
 
 #encapsulation code span.hljs-title {
